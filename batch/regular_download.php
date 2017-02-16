@@ -1,11 +1,5 @@
 <?php
 
-use React\EventLoop\Factory;
-use React\EventLoop\Timer\Timer;
-use React\Stream\Stream;
-
-require __DIR__ . '/../vendor/autoload.php';
-
 $start = microtime(true);
 
 $files = [
