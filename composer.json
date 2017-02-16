@@ -1,0 +1,17 @@
+{
+    "name": "jonathan.vuillemin/ratchet",
+    "authors": [
+        {
+            "name": "Jonathan Vuillemin",
+            "email": "jonathan.vuillemin@doclerholding.com"
+        }
+    ],
+    "autoload": {
+        "psr-0": {
+            "MyApp": "src"
+        }
+    },
+    "require": {
+        "cboden/ratchet": "0.3.*"
+    }
+}
