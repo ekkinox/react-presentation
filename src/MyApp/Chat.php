@@ -13,6 +13,8 @@ use SplObjectStorage;
  */
 class Chat implements MessageComponentInterface
 {
+	const SYSTEM = 'system';
+
     /**
      * @var SplObjectStorage
      */
@@ -34,7 +36,18 @@ class Chat implements MessageComponentInterface
         // Store the new connection to send messages to later
         $this->clients->attach($conn);
 
-        echo "New connection! ({$conn->resourceId})\n";
+		foreach ($this->clients as $client) {
+			if ($conn !== $client) {
+				$client->send(json_encode(
+					[
+						'user'    => static::SYSTEM,
+						'message' => "New connection! ({$conn->resourceId})"
+					]
+				));
+			}
+		}
+
+        echo "New connection! ({$conn->resourceId})" . PHP_EOL;
     }
 
     /**
@@ -69,7 +82,19 @@ class Chat implements MessageComponentInterface
         // The connection is closed, remove it, as we can no longer send it messages
         $this->clients->detach($conn);
 
-        echo "Connection {$conn->resourceId} has disconnected\n";
+		foreach ($this->clients as $client) {
+			if ($conn !== $client) {
+				// The sender is not the receiver, send to each client connected
+				$client->send(json_encode(
+					[
+						'user'    => static::SYSTEM,
+						'message' => "Connection {$conn->resourceId} has disconnected"
+					]
+				));
+			}
+		}
+
+        echo "Connection {$conn->resourceId} has disconnected" . PHP_EOL;
     }
 
     /**
@@ -79,6 +104,13 @@ class Chat implements MessageComponentInterface
     public function onError(ConnectionInterface $conn, Exception $e)
     {
         echo "An error has occurred: {$e->getMessage()}\n";
+
+		$conn->send(json_encode(
+			[
+				'user'    => static::SYSTEM,
+				'message' => $e->getMessage()
+			]
+		));
 
         $conn->close();
     }
